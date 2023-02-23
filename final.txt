@@ -1,0 +1,37 @@
+TITLE: Robot Path Generator to Avoid Jerk
+Peter Wetherell
+Section A
+
+PROBLEM DESCRIPTION: The user selects the points(as a vector) they would like the robot to go through on an arbitrary 2d plane. The program then calculates the best 
+path for the robot to go, managing both linear and rotation acceleration and velocity with the goal of making the fastest path that keeps jerk within allowable levels.
+In this case, jerk refers to cintripital acceleration. The program will then animate this on screen.
+
+PROGRAM DOCUMENTATION: This project uses SFML and therefore needs to be built using that. There are two ways to get the program to run. You can either pass in a file 
+for it to read, and it will extract the points and follow the path, or you can enter in points manually. When you run the program without passing in a file it 
+automatically prompts the user to enter in points. Each point consists of 3 values: x position, y position, angle (deg).
+    Generally, the program works by taking these points and then generating cubic splines using them. These are then used as a path for the robot to follow. In order
+to minimize jerk, the program has to go through and normalize the path to within the standards for acceleration and velocity. It does this is a 3 step process. First,
+it does a forward pass to ensure it accelerates properly, then a backward pass to decellerate, and finally a pass to ensure that the initial position is at time 0.
+    A feature that could be added is obstacle avoidance. I ran out of time with this project and therefore could not add dynamic obstacle avoidance to a predetermined
+path. I assume something like A* algorithm could be used to dynamically update points to run the trajectory through.
+    The main thing that changed in implementation is that the drive constants are no longer stored in a text file. They are simply added to the program itself. This
+would be a relatively simple change someone could change to improve the quality of life for using the program. I didn't add this because I didn't want to run out of 
+time for this project.
+
+LIST DATA STRUCTURE: There are 3 different types of lists implemented in the project: LinkedList, vector, and 1d array. The LinkedList is used to hold the user inputed
+points. The vector is used to hold the points that the robot would follow, and the 1d array is used to hold the coefficients for the cubic splines and to hold the path
+the robot follows.
+
+TESTS:
+1. Input starting points and nothing else - The robot sits at the starting point
+2. Build the same trajectory multiple times - It is able to rebuild the trajectory and stops it from leaking memory; however, it still spends time to rebuild it.
+3. Robot rotates more than 180* in any direction - The interpolation code applies spiralling code to mean it doesn't result in visual bugs with robot rotating further 
+than needed. This also had issues with the motion profiling which were fixed in a similar maner.
+4. Passing in positions that are way too large - The program caps positions that are out of range of the screen
+5. Passing in a text file that doesn't exist - throws an error that it cannot open the file properly
+
+
+REFLECTIONS: I learned a lot more about the physics involved with limiting jerk on the robot. Additionally, due to the 3 pass system for motion profiling I was able
+to take a complicated and break it down into 3 smaller tasks. I would have started on this project earlier, but I think that how I did it was fine. I would not have 
+wanted to start working on this over Thanksgiving break, so I am glad I was able to turn in something considering this. If I were to do this again I might try using
+a pure pursuit algorithm because I haven't seen motion profiling attempted for that, so it might be interesting.
